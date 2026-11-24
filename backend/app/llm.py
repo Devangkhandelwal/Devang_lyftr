@@ -213,6 +213,24 @@ def _status_for_key(simulation: dict[str, int], key_id: str) -> int | None:
 # --------------------------------------------------------------------------
 
 
+def _qualified_model(raw: Any, configured: str) -> str:
+    """Return the model name with its LiteLLM provider prefix.
+
+    Providers report the bare model name in the response ("gemini-3.1-flash-lite"),
+    while the API contract shows the full LiteLLM identifier
+    ("gemini/gemini-3.1-flash-lite"). The provider prefix is taken from the
+    configured model so the reported name still identifies the model that
+    actually answered.
+    """
+    if not raw:
+        return configured
+    name = str(raw)
+    if "/" in name:
+        return name
+    prefix, separator, _ = configured.partition("/")
+    return f"{prefix}/{name}" if separator else name
+
+
 def _field(container: Any, name: str, default: Any = None) -> Any:
     """Read a field from either an object or a dict.
 
@@ -362,7 +380,7 @@ async def generate(
                 input_tokens, output_tokens = _extract_usage(cached)
                 return GenerationResult(
                     reply=reply,
-                    model=_field(cached, "model") or settings.llm_model,
+                    model=_qualified_model(_field(cached, "model"), settings.llm_model),
                     input_tokens=input_tokens,
                     output_tokens=output_tokens,
                     key_id=None,
@@ -381,7 +399,7 @@ async def generate(
     input_tokens, output_tokens = _extract_usage(response)
     return GenerationResult(
         reply=reply,
-        model=_field(response, "model") or settings.llm_model,
+        model=_qualified_model(_field(response, "model"), settings.llm_model),
         input_tokens=input_tokens,
         output_tokens=output_tokens,
         key_id=key_id,

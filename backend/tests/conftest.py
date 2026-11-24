@@ -43,11 +43,12 @@ def make_response(
     text: str = "The capital of France is Paris.",
     prompt_tokens: int = 42,
     completion_tokens: int = 9,
+    model: str = TEST_MODEL,
 ) -> ModelResponse:
     """Build a completion response shaped like a real provider reply."""
     return ModelResponse(
         id="test-response",
-        model=TEST_MODEL,
+        model=model,
         object="chat.completion",
         created=1,
         choices=[

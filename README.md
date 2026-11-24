@@ -374,7 +374,7 @@ the token counts, `key_id` and `fallback_attempts`.
 
 ## Deployment
 
-### Backend on Render (Docker + persistent disk)
+### Backend on Render (Docker)
 
 1. Push this repository to GitHub.
 2. In Render: **New → Web Service**, connect the repository.
@@ -388,16 +388,25 @@ the token counts, `key_id` and `fallback_attempts`.
    | --- | --- |
    | `LLM_API_KEYS` | `your-first-key,your-second-key` |
    | `LLM_MODEL` | `gemini/gemini-3.1-flash-lite` |
-   | `DATABASE_URL` | `sqlite:////data/app.db` |
+   | `DATABASE_URL` | `sqlite:////data/app.db` (with a disk) or `sqlite:///./data/app.db` (free tier) |
    | `ALLOWED_ORIGINS` | your frontend URL, e.g. `https://your-app.vercel.app` |
    | `ENABLE_FAILURE_SIMULATION` | `true` |
    | `DEFAULT_SYSTEM_PROMPT` | `You are a helpful, concise assistant.` |
    | `CACHE_TYPE` | `disk` |
 
-5. **Add a disk** (Settings → Disks): mount path `/data`, 1 GB. Without it
-   the SQLite file lives on ephemeral storage and the history is lost on
-   every deploy. The image already creates `/data` owned by the non-root
-   `appuser`, so no extra permission setup is needed.
+5. **Storage.** Render's free tier does not support disks, so this
+   deployment runs without one: `DATABASE_URL` points at a path inside the
+   container and the SQLite file lives on ephemeral storage. History is
+   kept for the life of the instance — multi-turn conversations, the
+   history endpoint and the cache all behave normally — but it is cleared
+   when Render redeploys or wakes the service from sleep.
+
+   To make history durable, move to a paid instance and add a disk
+   (Settings → Disks) with mount path `/data`, 1 GB, then set
+   `DATABASE_URL=sqlite:////data/app.db`. The image already creates `/data`
+   owned by the non-root `appuser`, so no extra permission setup is needed.
+   Locally, `docker compose` always uses the named volume `app_data`, so
+   `make up` keeps history across restarts regardless.
 6. Deploy, then check `https://<service>.onrender.com/health`.
 
 > On Render's free tier the service sleeps when idle, so the first request

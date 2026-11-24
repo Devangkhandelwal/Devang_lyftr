@@ -216,3 +216,20 @@ def test_the_response_never_contains_a_real_api_key(client, fake_completion):
 
     assert "test-key-one" not in response.text
     assert "test-key-two" not in response.text
+
+
+def test_the_model_is_reported_with_its_provider_prefix(client, fake_completion):
+    """Providers report a bare model name; the contract shows the LiteLLM id.
+
+    Gemini answers with "gemini-3.1-flash-lite" in response.model, but the API
+    contract (and the assignment sample) shows "gemini/gemini-2.0-flash", so the
+    configured provider prefix is put back before the name is returned.
+    """
+    fake_completion(make_response(text="Paris", model="gemini-3.1-flash-lite"))
+
+    response = client.post(
+        "/chat", json={"session_id": "s-prefix", "message": "Capital of France?"}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["metadata"]["model"] == "gemini/gemini-3.1-flash-lite"
