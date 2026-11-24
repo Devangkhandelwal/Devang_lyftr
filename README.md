@@ -24,14 +24,22 @@ Backend: FastAPI + LiteLLM + SQLite. Frontend: React (Vite).
 
 ## 1. Live URLs
 
-Not deployed yet. Fill these in after following the deployment steps in
-[Deployment](#deployment):
+Both tiers are deployed and connected. No login is needed for either.
 
 | Service | URL |
 | --- | --- |
-| Frontend | `https://<your-app>.vercel.app` |
-| Backend | `https://<your-service>.onrender.com` |
-| Health check | `https://<your-service>.onrender.com/health` |
+| Frontend | <https://devang-lyftr.vercel.app> |
+| Backend | <https://lyftr-chatbot-backend-5p2k.onrender.com> |
+| Health check | <https://lyftr-chatbot-backend-5p2k.onrender.com/health> |
+
+The frontend is on Vercel (root directory `frontend`, `VITE_API_URL` set to
+the backend URL at build time) and the backend on Render's free plan, built
+from `render.yaml`.
+
+> **The free Render instance sleeps when idle.** The first request after a
+> pause wakes the container and can take 40 seconds or more; every request
+> after that is fast. That delay is the platform starting up, not the model.
+> Load the health check once before trying the chat.
 
 ---
 
