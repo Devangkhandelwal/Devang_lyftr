@@ -376,6 +376,14 @@ the token counts, `key_id` and `fallback_attempts`.
 
 ### Backend on Render (Docker)
 
+The repository contains a `render.yaml` blueprint, so the service type, the
+Docker build, the health check and every non-secret environment variable are
+declared in code. The quickest route is **New → Blueprint**: point Render at
+this repository and it reads `render.yaml`, then prompts only for the two
+values marked `sync: false` (`LLM_API_KEYS` and `ALLOWED_ORIGINS`).
+
+The manual route below is equivalent if you prefer to click through it.
+
 1. Push this repository to GitHub.
 2. In Render: **New → Web Service**, connect the repository.
 3. Settings:

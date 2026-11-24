@@ -1,0 +1,61 @@
+# Render blueprint for the backend.
+#
+# Render reads this file automatically when the repository is deployed as a
+# Blueprint (Dashboard -> New -> Blueprint). Everything that is not a secret
+# is declared here, so the only values that have to be typed by hand are the
+# two marked "sync: false" below.
+#
+# Storage note: the free plan does not support disks, so /data lives on
+# ephemeral storage. The backend image already creates /data owned by the
+# non-root appuser, so the SQLite file and the disk cache work normally for
+# the life of the instance; they are cleared on redeploy or when the service
+# wakes from sleep. To make history durable, upgrade the plan and attach a
+# disk with mount path /data - DATABASE_URL already points there.
+
+services:
+  - type: web
+    name: lyftr-chatbot-backend
+    runtime: docker
+    plan: free
+    region: oregon
+
+    # Build only the backend folder; the Dockerfile is multi-stage.
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+
+    # Render restarts the service if this stops returning 200.
+    healthCheckPath: /health
+
+    envVars:
+      # Secret: the comma separated Gemini key pool. Render prompts for this
+      # at deploy time and never stores it in the repository.
+      - key: LLM_API_KEYS
+        sync: false
+
+      # Set this to the deployed frontend origin once Vercel has given you a
+      # URL, e.g. https://devang-lyftr.vercel.app  (no trailing slash).
+      # The browser blocks every request until this matches exactly.
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+      - key: LLM_MODEL
+        value: gemini/gemini-3.1-flash-lite
+
+      # Four slashes = absolute path: /data/app.db
+      - key: DATABASE_URL
+        value: sqlite:////data/app.db
+
+      # Required by the assignment so the X-Simulate-Failure hook works on
+      # the deployed backend.
+      - key: ENABLE_FAILURE_SIMULATION
+        value: "true"
+
+      - key: DEFAULT_SYSTEM_PROMPT
+        value: You are a helpful, concise assistant.
+
+      - key: CACHE_TYPE
+        value: disk
+
+      # PORT is injected by Render and honoured by the Dockerfile CMD, so it
+      # is deliberately not set here.
