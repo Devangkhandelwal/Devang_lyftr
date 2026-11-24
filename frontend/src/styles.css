@@ -1,0 +1,339 @@
+:root {
+  --bg: #0f1420;
+  --panel: #171d2b;
+  --panel-soft: #1e2636;
+  --border: #2a3448;
+  --text: #e8ecf4;
+  --text-dim: #93a0b8;
+  --user: #2f6df6;
+  --live: #1f8a4c;
+  --live-border: #2fbe6c;
+  --cache: #1f5fa8;
+  --cache-border: #4a95e6;
+  --error: #7a2230;
+  --error-border: #e0566e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 15px;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ------------------------------- header -------------------------------- */
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 650;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.subtitle code {
+  color: var(--text-dim);
+}
+
+.session {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.session-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+
+.session-id {
+  font-size: 12px;
+  color: var(--text-dim);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 7px;
+}
+
+/* --------------------------- system prompt ----------------------------- */
+
+.prompt-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prompt-label {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.prompt-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.prompt-input:focus {
+  outline: none;
+  border-color: var(--user);
+}
+
+.prompt-input:disabled {
+  opacity: 0.6;
+}
+
+/* ------------------------------ messages ------------------------------- */
+
+.messages {
+  flex: 1;
+  min-height: 320px;
+  max-height: 62vh;
+  overflow-y: auto;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.empty {
+  margin: auto;
+  max-width: 420px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.row {
+  display: flex;
+}
+
+/* The user is on the right, the assistant on the left. */
+.row-user {
+  justify-content: flex-end;
+}
+
+.row-assistant {
+  justify-content: flex-start;
+}
+
+.bubble {
+  max-width: 82%;
+  padding: 10px 13px;
+  border-radius: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.bubble-user {
+  background: var(--user);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.bubble-assistant {
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+
+.bubble-error {
+  background: var(--error);
+  border: 1px solid var(--error-border);
+  border-bottom-left-radius: 4px;
+}
+
+.error-title {
+  display: block;
+  font-weight: 650;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+
+.error-detail {
+  font-size: 13px;
+}
+
+/* ------------------------------ metadata ------------------------------- */
+
+.metadata {
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 650;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+/* Green for a live call, blue for a cache hit. */
+.badge-live {
+  background: var(--live);
+  border: 1px solid var(--live-border);
+  color: #eafff2;
+}
+
+.badge-cache {
+  background: var(--cache);
+  border: 1px solid var(--cache-border);
+  color: #eaf4ff;
+}
+
+.metadata-item {
+  display: inline-flex;
+  gap: 4px;
+  align-items: baseline;
+}
+
+.metadata-label {
+  color: var(--text-dim);
+}
+
+.metadata-value {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------- loading dots ------------------------------ */
+
+.loading {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  animation: blink 1.3s infinite ease-in-out;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.18s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
+@keyframes blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+/* ------------------------------ composer ------------------------------- */
+
+.composer {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.composer-input {
+  flex: 1;
+  resize: vertical;
+  padding: 11px 13px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.composer-input:focus {
+  outline: none;
+  border-color: var(--user);
+}
+
+.composer-input:disabled {
+  opacity: 0.6;
+}
+
+.composer-button {
+  min-width: 100px;
+  padding: 0 20px;
+  border-radius: 10px;
+  border: none;
+  background: var(--user);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.composer-button:disabled {
+  background: #35435c;
+  color: var(--text-dim);
+  cursor: not-allowed;
+}
+
+@media (max-width: 560px) {
+  .bubble {
+    max-width: 94%;
+  }
+
+  .composer-button {
+    min-width: 78px;
+    padding: 0 12px;
+  }
+}

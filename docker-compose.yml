@@ -1,0 +1,46 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    image: llm-chatbot-backend
+    container_name: llm-chatbot-backend
+    env_file: .env
+    environment:
+      # The named volume is mounted at /data, so the database lives there
+      # and survives container restarts. Four slashes means an absolute path.
+      DATABASE_URL: sqlite:////data/app.db
+    ports:
+      - "8000:8000"
+    volumes:
+      - app_data:/data
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - |
+          import sys, urllib.request
+          sys.exit(0 if urllib.request.urlopen("http://localhost:8000/health", timeout=5).status == 200 else 1)
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Build time value baked into the bundle by Vite.
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    image: llm-chatbot-frontend
+    container_name: llm-chatbot-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  app_data:

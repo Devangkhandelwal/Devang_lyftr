@@ -1,0 +1,13 @@
+# Runtime
+fastapi==0.165.0
+uvicorn[standard]==0.54.0
+litellm==1.110.3
+pydantic==2.14.4
+pydantic-settings==2.16.3
+python-dotenv==1.2.4
+# Local, SQLite backed store used when CACHE_TYPE=disk.
+diskcache==5.6.3
+
+# Tests. Kept here so "make test" can run the suite inside the backend image.
+pytest==9.2.0
+httpx==0.28.1
